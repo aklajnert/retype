@@ -5,7 +5,7 @@ from pathlib import Path
 import click
 
 from . import retype_path
-from .config import ReApplyFlags
+from .config import ReApplyFlags, Ignores
 from .version import __version__
 
 Directory = partial(
@@ -48,13 +48,16 @@ Directory = partial(
 @click.option(
     "--hg", is_flag=True, help="Post-process files to preserve implicit byte literals."
 )
+@click.option(
+    "--ignore", help="Ignore errors for certain elements.", multiple=True
+)
 @click.option("--traceback", is_flag=True, help="Show a Python traceback on error.")
 @click.argument("src", nargs=-1, type=Directory(file_okay=True))
 @click.version_option(version=__version__)
-def main(src, pyi_dir, target_dir, incremental, quiet, replace_any, hg, traceback):
+def main(src, pyi_dir, target_dir, incremental, quiet, replace_any, hg, ignore, traceback):
     """Re-apply type annotations from .pyi stubs to your codebase."""
-
     exit_code = 0
+    Ignores.ignore = ignore
     for src_entry in src:
         for file, error, exc_type, tb in retype_path(
             src=Path(src_entry),

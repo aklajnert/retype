@@ -17,7 +17,7 @@ from pathlib import Path
 from pathspec import PathSpec
 from typed_ast import ast3
 
-from .config import ReApplyFlags
+from .config import ReApplyFlags, Ignores
 from .version import __version__
 
 
@@ -1133,6 +1133,8 @@ def maybe_replace_any_if_equal(name, expected, actual, flags):
         is_equal = actual_str in {"Any", "typing.Any", "t.Any"}
 
     if not is_equal:
+        if str(name) in Ignores.ignore:
+            return expected or actual
         expected_annotation = minimize_whitespace(str(expected))
         actual_annotation = minimize_whitespace(str(actual))
         raise ValueError(

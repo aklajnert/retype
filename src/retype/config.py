@@ -5,3 +5,6 @@ class ReApplyFlags:
     def __init__(self, *, replace_any=True, incremental=False):
         self.replace_any = replace_any
         self.incremental = incremental
+        
+class Ignores:
+        ignore = []
